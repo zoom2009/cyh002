@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import * as firebase from 'firebase';
-import { View, Text, StyleSheet, TextInput, TouchableHighlight } from 'react-native';
-import { Icon } from 'react-native-elements'
+import { View, Text, StyleSheet, Alert } from 'react-native';
+
+import  BtnFull  from './components/BtnFull'
+import  BtnTransparent  from './components/BtnTransparent'
+import  Input  from './components/Input'
 
 var config = {
   apiKey: "AIzaSyBevRQtoQ6xc8qJ0EBImxZeCNB684IxBno",
@@ -24,23 +27,39 @@ export default class App extends Component {
     }
   }
 
+  SetEmailVal(val) {
+    this.setState({
+      email: val
+    })
+  }
+
+  SetPasswordVal(val) {
+    this.setState({
+      password: val
+    })
+  }
+
   SignIn() {
     firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
     .then(result => {
-      console.log(result)
+      //console.log('Sign In Successful')
+      Alert.alert('Sign In Successful')
     })
     .catch(e => {
-      console.log(e)
+      //console.log(e.message)
+      Alert.alert(e.message)
     })
   }
 
   SignUp() {
     firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
     .then(result => {
-      console.log(result)
+      //console.log('Sign Up Successful')
+      Alert.alert('Sign Up Successful')
     })
     .catch(e => {
-      console.log(e)
+      //console.log(e.message)
+      Alert.alert(e.message)
     })
   }
 
@@ -51,58 +70,34 @@ export default class App extends Component {
 
         <View style={styles.inputPlace}>
           
-          <View style={styles.inputPanel}>
-            <Icon
-              style={styles.inputIcon}
-              size={42}
-              name='email-outline'
-              type='material-community'
-              />
-            <TextInput style={styles.input} 
-              onChangeText={(text)=>{this.setState({
-                email: text
-              })}}
-              underlineColorAndroid="rgba(0,0,0,0)" 
-              placeholder="Email" 
-              />
-          </View>
+          <Input 
+            name='email-outline'
+            type='material-community'
+            size={42}
+            textChange={this.SetEmailVal.bind(this)}
+            holder='Email'
+            isPassword={false}
+            />
 
-           <View style={styles.inputPanel}>
-            <Icon
-              style={styles.inputIcon}
-              size={42}
-              name='lock-outline'
-              type='material-community'
+          <Input 
+            name='lock-outline'
+            type='material-community'
+            size={42}
+            textChange={this.SetPasswordVal.bind(this)}
+            holder='Password'
+            isPassword={true}
+          />
+
+          <BtnFull
+            btnText="Sign In" 
+            signInMethod={this.SignIn.bind(this)}
               />
-            <TextInput style={styles.input} 
-              onChangeText={(text)=>{this.setState({
-                password: text
-              })}}
-              underlineColorAndroid="rgba(0,0,0,0)" 
-              placeholder="Password"
-              secureTextEntry={true}
-              />
-          </View>
 
-          <TouchableHighlight 
-            onPress={this.SignIn.bind(this)}
-            underlayColor = "#ccc"
-            style={styles.touch}
-            >
-            <View style={styles.button}>
-              <Text style={styles.buttonText}>Sign In</Text>
-            </View>
-          </TouchableHighlight>
-
-          <TouchableHighlight 
-            onPress={this.SignUp.bind(this)}
-            underlayColor = "#fff"
-            style={styles.touch}>
-            <View style={styles.buttonOutline}>
-              <Text style={styles.buttonTextOutline}>Sign Up</Text>
-            </View>
-          </TouchableHighlight>
-
+          <BtnTransparent 
+            btnText="Sign Up"
+            signUpMethod={this.SignUp.bind(this)}
+            />
+          
         </View>
       </View>
     )
@@ -118,31 +113,10 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   title: {
-    fontSize: 40, 
+    fontSize: 50, 
     fontWeight: 'bold', 
     color: '#fff',
     paddingVertical: 25
-  },
-  input: {
-    width: '80%',
-    textAlign: 'left',
-    fontSize: 24,
-    color: '#fff',
-    paddingLeft: 14
-  },
-  inputIcon: {
-    width: '20%',
-    alignSelf: 'center'
-  },
-  inputPanel: {
-    flexDirection: 'row', 
-    width: '75%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 8,
-    marginVertical: 10,
-    backgroundColor: 'rgba(33,33,33,0.8)',
-    borderRadius: 14
   },
   inputPlace: {
     width: '100%',
@@ -150,37 +124,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'column'
   },
-  button: {
-    borderRadius: 14,
-    paddingVertical: 8,
-    marginVertical: 8,
-    backgroundColor: 'rgba(255,255,255,0.8)',
-    width: '100%',
-  },
-  buttonText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#e74c3c',
-    textAlign: 'center'
-  },
-  buttonOutline: {
-    borderRadius: 14,
-    paddingVertical: 8,
-    marginVertical: 8,
-    backgroundColor: 'rgba(0,0,0,0)',
-    width: '100%',
-  },
-  buttonTextOutline: {
-    fontSize: 18,
-    fontWeight: 'normal',
-    color: '#fff',
-    textAlign: 'center'
-  },
-  touch: {
-    borderRadius: 14,
-    width: '75%', 
-    justifyContent: 'center', 
-    alignItems: 'center'
-   
-  }
+  
 });
