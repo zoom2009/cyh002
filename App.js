@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import * as firebase from 'firebase';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
 
 import  BtnFull  from './components/BtnFull'
 import  BtnTransparent  from './components/BtnTransparent'
 import  Input  from './components/Input'
+import  Title  from './components/Title'
 
 var config = {
   apiKey: "AIzaSyBevRQtoQ6xc8qJ0EBImxZeCNB684IxBno",
@@ -66,8 +67,9 @@ export default class App extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>CYH</Text>
 
+        <Title text="CYH" />
+        
         <View style={styles.inputPlace}>
           
           <Input 
@@ -86,12 +88,12 @@ export default class App extends Component {
             textChange={this.SetPasswordVal.bind(this)}
             holder='Password'
             isPassword={true}
-          />
+            />
 
           <BtnFull
             btnText="Sign In" 
             signInMethod={this.SignIn.bind(this)}
-              />
+            />
 
           <BtnTransparent 
             btnText="Sign Up"
@@ -111,12 +113,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(210, 37, 37, 0.74)',
     justifyContent: 'center',
     alignItems: 'center'
-  },
-  title: {
-    fontSize: 50, 
-    fontWeight: 'bold', 
-    color: '#fff',
-    paddingVertical: 25
   },
   inputPlace: {
     width: '100%',
