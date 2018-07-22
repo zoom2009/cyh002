@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import * as firebase from 'firebase';
-import { View, StyleSheet, Alert } from 'react-native';
+import { View, Text, StyleSheet, Alert } from 'react-native';
 
 import  BtnFull  from './components/BtnFull'
 import  BtnTransparent  from './components/BtnTransparent'
@@ -45,6 +45,10 @@ export default class App extends Component {
     .then(result => {
       //console.log('Sign In Successful')
       Alert.alert('Sign In Successful')
+      var database = firebase.database();
+        database.ref('users/'+result.user.uid).once('value').then(function(snapshot){
+            console.log(snapshot.val())
+        })
     })
     .catch(e => {
       //console.log(e.message)
@@ -55,7 +59,12 @@ export default class App extends Component {
   SignUp() {
     firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
     .then(result => {
-      //console.log('Sign Up Successful')
+      let usersRef = firebase.database().ref().child("users")
+      usersRef.child(result.user.uid).set({
+        id: result.user.uid,
+        email: this.state.email
+      })
+      //console.log(result.user.uid)
       Alert.alert('Sign Up Successful')
     })
     .catch(e => {
