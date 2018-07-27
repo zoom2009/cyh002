@@ -8,6 +8,7 @@ import  Input  from '../components/Input'
 import  Title  from '../components/Title'
 
 import { LinearGradient } from 'expo';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 var config = {
   apiKey: "AIzaSyBevRQtoQ6xc8qJ0EBImxZeCNB684IxBno",
@@ -24,6 +25,10 @@ export default class LoginScreen extends Component {
   }
   constructor(props) {
     super(props);
+
+    this.state = {
+      waitLogin: false
+    }
 
     firebase.initializeApp(config);
 
@@ -45,18 +50,39 @@ export default class LoginScreen extends Component {
     })
   }
 
+  StopWait() {
+    this.setState({
+      waitLogin: false
+    })
+  }
+
+
   SignIn() {
+    this.setState({waitLogin: true})
     firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
     .then(result => {
       //console.log('Sign In Successful')
-      Alert.alert('Sign In Successful')
+      //Alert.alert('Sign In Successful')
+      const { navigate } = this.props.navigation
+
+      stopWait = () => {
+        this.setState({
+          waitLogin: false
+        })
+      }
+
       var database = firebase.database();
         database.ref('users/'+result.user.uid).once('value').then(function(snapshot){
-            console.log(snapshot.val())
+            console.log(snapshot.val().btAddr)
+            //is logined
+            stopWait()
+            navigate('Profile', { btAddr: snapshot.val().btAddr })
         })
+      
     })
     .catch(e => {
-      //console.log(e.message)
+      //fail to login
+      this.setState({waitLogin: false})
       Alert.alert(e.message)
     })
   }
@@ -78,7 +104,8 @@ export default class LoginScreen extends Component {
       Alert.alert(e.message)
     })
   }
-*/
+  */
+
   render() {
     const { navigate } = this.props.navigation
     return (
@@ -87,6 +114,13 @@ export default class LoginScreen extends Component {
         end={[0.5,1]}
         colors={['#E30072', '#AD0EB2', '#5800F0']}
         style={styles.container}>
+
+        <Spinner 
+          cancelable={true}
+          visible={this.state.waitLogin} 
+          textContent={"Loading..."} 
+          overlayColor='rgba(0,0,0,0.25)'
+          textStyle={{color: '#FFF'}} />
       
         <View style={{marginBottom: 70, width: '100%', height: '25%'}}>
           <Image style={{width: '100%', height: '100%', resizeMode: 'contain'}} source={require('../img/cyh_logo.png')} />
@@ -118,12 +152,12 @@ export default class LoginScreen extends Component {
             signInMethod={this.SignIn.bind(this)}
             />
 
-          {/* 
+          {/*
           <BtnTransparent 
             btnText="Sign Up"
             signUpMethod={this.SignUp.bind(this)}
             />
-            */}  
+          */} 
           
         </View>
       </LinearGradient>
