@@ -9,6 +9,7 @@ import  Title  from '../components/Title'
 
 import { LinearGradient } from 'expo';
 import Spinner from 'react-native-loading-spinner-overlay';
+import Logocyh from '../components/Logocyh';
 
 var config = {
   apiKey: "AIzaSyBevRQtoQ6xc8qJ0EBImxZeCNB684IxBno",
@@ -122,9 +123,7 @@ export default class LoginScreen extends Component {
           overlayColor='rgba(0,0,0,0.25)'
           textStyle={{color: '#FFF'}} />
       
-        <View style={{marginBottom: 70, width: '100%', height: '25%'}}>
-          <Image style={{width: '100%', height: '100%', resizeMode: 'contain'}} source={require('../img/cyh_logo.png')} />
-        </View>
+        <Logocyh />
         {/* <Title text="CYH" />*/} 
         
         <View style={styles.inputPlace}>
@@ -149,7 +148,7 @@ export default class LoginScreen extends Component {
 
           <BtnFull
             btnText="Sign In" 
-            signInMethod={this.SignIn.bind(this)}
+            Method={this.SignIn.bind(this)}
             />
 
           {/*

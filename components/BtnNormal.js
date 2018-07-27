@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, TouchableHighlight } from 'react-native';
 
-class btnFull extends Component {
+class btnNormal extends Component {
     render() {
         return (
             <TouchableHighlight 
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     buttonText: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: '#e74c3c',
+        color: '#000',
         textAlign: 'center'
     },
     touch: {
@@ -40,4 +40,4 @@ const styles = StyleSheet.create({
       }
 })
 
-export default btnFull;
+export default btnNormal;

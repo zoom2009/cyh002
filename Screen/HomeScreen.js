@@ -19,20 +19,21 @@ export default class HomeScreen extends Component {
     const { navigate } = this.props.navigation
     return (
       <LinearGradient 
-        start={[0,0]}
-        end={[1,1]}
-        colors={['#ED7EC4', '#ED7EC4', '#735CE6']}
+        start={[0.5,0]}
+        end={[0.5,1]}
+        colors={['#E30072', '#AD0EB2', '#5800F0']}
         style={styles.container}>
+        <View style={styles.transpareantBlock}>
 
-        <View style={{flexDirection: 'row', width: '100%', height: '25%', justifyContent: 'center', alignItems: 'center'}}>
-          <Image style={{width: '25%', height: '100%', resizeMode: 'contain', marginRight: 16}} source={require('../img/boy_icon.png')} />
-          <Image style={{width: '25%', height: '100%', resizeMode: 'contain'}} source={require('../img/girl_icon.png')} />
+          <View style={{flexDirection: 'row', width: '100%', height: '25%', justifyContent: 'center', alignItems: 'center'}}>
+            <Image style={{width: '25%', height: '100%', resizeMode: 'contain', marginRight: 16}} source={require('../img/boy_icon.png')} />
+            <Image style={{width: '25%', height: '100%', resizeMode: 'contain'}} source={require('../img/girl_icon.png')} />
+          </View>
+          
+          <Text style={{fontSize: 24, fontWeight: 'bold', color: '#000', textAlign: 'center'}}>ระบบติดตามตำแหน่งเด็กนักเรียน</Text>
+          <Text style={{fontSize: 24, fontWeight: 'bold', color: '#000', textAlign: 'center'}}>อนุบาลในรถโรงเรียน</Text>
+
         </View>
-        
-        <Text style={{fontSize: 24, fontWeight: 'bold', color: '#000', textAlign: 'center'}}>ระบบติดตามตำแหน่งเด็กนักเรียน</Text>
-        <Text style={{fontSize: 24, fontWeight: 'bold', color: '#000', textAlign: 'center'}}>อนุบาลในรถโรงเรียน</Text>
-
-
       </LinearGradient>
     )
   }
@@ -46,4 +47,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
+  transpareantBlock: {
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    width: '100%', 
+    height: '100%', 
+    backgroundColor: 'rgba(255,255,255,0.35)'
+  }
 });

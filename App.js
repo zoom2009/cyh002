@@ -6,16 +6,18 @@ import LoginScreen from './Screen/LoginScreen'
 import ProfileScreen from './Screen/ProfileScreen'
 
 const NavigationApp = StackNavigator({
-  Home: { screen: HomeScreen },
+  Home: { screen: HomeScreen, },
   Login: { screen: LoginScreen },
   Profile: { screen: ProfileScreen }
   }, {
+    index: 0,
+    initialRouteName: 'Home',
+    headerMode: 'none',
     navigationOptions: {
-      headerStyle: {
-        
-      }
+      gesturesEnabled: false
     }
 });
+
 
 export default class App extends Component {
   render() {
