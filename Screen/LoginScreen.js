@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import * as firebase from 'firebase';
-import { View, StyleSheet, Alert } from 'react-native';
+import { View, StyleSheet, Alert, Image } from 'react-native';
 
 import  BtnFull  from '../components/BtnFull'
 import  BtnTransparent  from '../components/BtnTransparent'
 import  Input  from '../components/Input'
 import  Title  from '../components/Title'
+
+import { LinearGradient } from 'expo';
 
 var config = {
   apiKey: "AIzaSyBevRQtoQ6xc8qJ0EBImxZeCNB684IxBno",
@@ -80,9 +82,16 @@ export default class LoginScreen extends Component {
   render() {
     const { navigate } = this.props.navigation
     return (
-      <View style={styles.container}>
-
-        <Title text="CYH" />
+      <LinearGradient 
+        start={[0.5,0]}
+        end={[0.5,1]}
+        colors={['#E30072', '#AD0EB2', '#5800F0']}
+        style={styles.container}>
+      
+        <View style={{marginBottom: 70, width: '100%', height: '25%'}}>
+          <Image style={{width: '100%', height: '100%', resizeMode: 'contain'}} source={require('../img/cyh_logo.png')} />
+        </View>
+        {/* <Title text="CYH" />*/} 
         
         <View style={styles.inputPlace}>
           
@@ -117,7 +126,7 @@ export default class LoginScreen extends Component {
             */}  
           
         </View>
-      </View>
+      </LinearGradient>
     )
   }
 }

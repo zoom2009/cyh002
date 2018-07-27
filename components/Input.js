@@ -7,6 +7,7 @@ class Input extends Component {
         return (
             <View style={styles.inputPanel}>
                 <Icon
+                    color='rgba(255,255,255,0.5)'
                     style={styles.inputIcon}
                     size={this.props.size}
                     name={this.props.name}
