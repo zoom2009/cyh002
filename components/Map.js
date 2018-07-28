@@ -46,13 +46,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 6,
-    },
-    borderMap: {
-        width: '83%',
-        height: '33%',
-        backgroundColor: '#EE36B0',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 6,
+        marginVertical: 20
     }
 })
