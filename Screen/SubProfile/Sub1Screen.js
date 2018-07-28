@@ -16,6 +16,11 @@ export default class Sub1Screen extends Component {
 
     this.state = {
       timeCount: 0,
+      tempAlertCount: 0,
+      realTimeCount: 0,
+      date: '',
+      time: '',
+      carID: '',
       carSt: 'รถไม่เคลื่อนที่',
       kidStatus: 'เด็กไม่อยู่ในรถ',
       curDistance: 0,
@@ -23,6 +28,8 @@ export default class Sub1Screen extends Component {
       lng: 99.99, //99.89862454
       temp: 99.99
     }
+
+    this.getData()
 
     setInterval(() => {
       this.getData()
@@ -42,14 +49,27 @@ export default class Sub1Screen extends Component {
 
     timeUp = () => {
       console.log('timeUp')
+      if(this.state.temp >= 30) {
+        this.setState((old) => {
+          return {tempAlertCount: old.tempAlertCount+1}
+        })
+      }else {
+        this.setState({
+          tempAlertCount: 0
+        })
+      }
       this.setState((old) => {
         return {timeCount: old.timeCount+1}
       })
-      if(this.state.timeCount >= 30) {
+      if(this.state.timeCount >= 30) { //5mn. car not moving
         //not move
         this.setState({
           carSt: 'รถไม่เคลื่อนที่',
         })
+        if(this.state.tempAlertCount >= 30) {
+          //alert kid stuck in car!!!
+          console.log('kid stuck in car!!!')
+        }
       }
     }
 
@@ -61,14 +81,46 @@ export default class Sub1Screen extends Component {
       })
     }
 
+    isSameObj = (obj1, obj2) => {
+      console.log('date1 :', obj1.date)
+      console.log('date2 :', obj2.date)
+      if(obj1.date==obj2.date
+        && obj1.time==obj2.time
+        && obj1.temp==obj2.temp
+        && obj1.lat==obj2.lat
+        && obj1.lng==obj2.lng
+        && obj1.carID==obj2.carID){
+          console.log('+++')
+          return true
+      }
+      console.log('---')
+      return false
+    }
+
     setVal = (data) => {
       console.log('setVal')
-      this.setState({
-        lat: data.lat,
-        lng: data.lng,
-        temp: data.temp,
-
+      this.setState((old) => {
+        let t = 0
+        console.log('old: ', old)
+        console.log('data: ', data)
+        if(isSameObj(old, data)) {
+          t = old.realTimeCount+1
+        }
+        return {
+          carID: data.carID,
+          lat: data.lat,
+          lng: data.lng,
+          temp: data.temp,
+          time: data.time,
+          date: data.date,
+          realTimeCount: t
+        }
       })
+      console.log('realtimeCount:', this.state.realTimeCount)
+      if(this.state.realTimeCount>=3) {
+        console.log('not update!!')
+        console.log('ถึง รร แล้วครับ')
+      }
     }
 
     fetch('https://kiddatabase.herokuapp.com/watch/'+btAddr+'/getlast', {
@@ -82,14 +134,18 @@ export default class Sub1Screen extends Component {
       })
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log(responseJson);
+       // console.log(responseJson);
         if(responseJson) {
+          
+    
           let d = distance(oldData.lat, oldData.lng, responseJson.lat, responseJson.lng)
           setVal(responseJson)
-          if(d<=20) {
+          if(d*1000<=15) {
             timeUp()
           }else {
-            resetTime()    
+            if(oldData.lat != 99.99 && oldData.lng != 99.99) {
+              resetTime()
+            }  
           }
         }
       })
@@ -110,7 +166,7 @@ export default class Sub1Screen extends Component {
       carStatusColor = '#5cb85c'
     }
     
-    console.log('data :', btAddr)
+    //console.log('data :', btAddr)
     return (
       <LinearGradient 
         start={[0.5,0]}
