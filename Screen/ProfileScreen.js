@@ -14,12 +14,12 @@ export default class ProfileScreen extends Component {
 
   }
 
-  hello() {
-    Alert.alert('Hello')
+  moveTo(target, data) {
+    const { navigate } = this.props.navigation
+    navigate(target, data)
   }
 
   render() {
-    const { navigate } = this.props.navigation
     const { navigation } = this.props;
     const btAddr = navigation.getParam('btAddr', 'none bluetooth id');
     console.log('data :', btAddr)
@@ -33,25 +33,33 @@ export default class ProfileScreen extends Component {
 
         <Logocyh />
 
-         <BtnNormal
-            btnText="สถานะนักเรียน" 
-            Method={this.hello}
-            />
+        <BtnNormal
+          btnText="สถานะนักเรียน" 
+          Method={() => {
+            this.moveTo('Sub1', {btAddr})
+          }}
+          />
 
-         <BtnNormal
-            btnText="ข้อมูลนักเรียน" 
-            Method={this.hello}
-            />
+        <BtnNormal
+          btnText="ข้อมูลนักเรียน" 
+          Method={() => {
+            this.moveTo('Sub2', {btAddr})
+          }}
+          />
 
-         <BtnNormal
-            btnText="ติดต่อคนขับรถ" 
-            Method={this.hello}
-            />
+        <BtnNormal
+          btnText="ติดต่อคนขับรถ" 
+          Method={() => {
+            this.moveTo('Sub3', {btAddr})
+          }}
+          />
 
-         <BtnFull
-            btnText="ติดต่อขอความช่วยเหลือ" 
-            Method={this.hello}
-            />
+        <BtnFull
+          btnText="ติดต่อขอความช่วยเหลือ" 
+          Method={() => {
+            this.moveTo('Sub4', {btAddr})
+          }}
+          />
 
 
       </LinearGradient>
