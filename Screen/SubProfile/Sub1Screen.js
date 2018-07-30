@@ -4,6 +4,8 @@ import { LinearGradient } from 'expo';
 import Map from '../../components/Map'
 import TextBlock from '../../components/TextBlock'
 
+import SocketIOClient from 'socket.io-client';
+
 var distance = require('gps-distance')
 
 
@@ -15,145 +17,57 @@ export default class Sub1Screen extends Component {
     super(props)
 
     this.state = {
-      timeCount: 0,
-      tempAlertCount: 0,
-      realTimeCount: 0,
       date: '',
       time: '',
       carID: '',
       carSt: 'รถไม่เคลื่อนที่',
       kidStatus: 'เด็กไม่อยู่ในรถ',
-      curDistance: 0,
       lat: 99.99, //8.637796473
       lng: 99.99, //99.89862454
       temp: 99.99
     }
 
-    this.getData()
+    this.socket = SocketIOClient('https://kiddatabase.herokuapp.com/');
 
-    setInterval(() => {
-      this.getData()
-    }, 10000)
+    this.socket.on('send message', (data) => {
+      console.log(data)
+    })
 
+    this.socket.on('carPost', (data) => {
+      const { navigation } = this.props;
+      const btAddr = navigation.getParam('btAddr', 'none bluetooth id');
+
+      if(this.isHaveMacAddr(data.watch, btAddr)) {
+        console.log('is found ', btAddr)
+        console.log(data)
+        this.setState({
+          date: data.date,
+          time: data.time,
+          carID: data.id,
+          lat: parseFloat(data.lat),
+          lng: parseFloat(data.lng),
+          temp: data.temp,
+          carSt: 'รถกำลังเคลื่อนที่',
+          kidStatus: 'เด็กอยู่ในรถ',
+        })
+      }else {
+        console.log('not found this addr:', btAddr)
+        console.log("data is", data)
+      }
+    })  
+
+  }
+
+  isHaveMacAddr (data, macAddr) {
+    for(let i=0;i<data.length;i++) {
+      if(data[i].mac_address == macAddr) {
+        return true
+      }
+    }
+    return false
   }
 
   
-
-  getData() {
-    let { navigation } = this.props;
-    let oldData = {
-      lat: this.state.lat,
-      lng: this.state.lng,
-    }
-    let btAddr = navigation.getParam('btAddr', 'none bluetooth id');
-
-    timeUp = () => {
-      console.log('timeUp')
-      if(this.state.temp >= 30) {
-        this.setState((old) => {
-          return {tempAlertCount: old.tempAlertCount+1}
-        })
-      }else {
-        this.setState({
-          tempAlertCount: 0
-        })
-      }
-      this.setState((old) => {
-        return {timeCount: old.timeCount+1}
-      })
-      if(this.state.timeCount >= 30) { //5mn. car not moving
-        //not move
-        this.setState({
-          carSt: 'รถไม่เคลื่อนที่',
-        })
-        if(this.state.tempAlertCount >= 30) {
-          //alert kid stuck in car!!!
-          console.log('kid stuck in car!!!')
-        }
-      }
-    }
-
-    resetTime = () => {
-      console.log('resetTime')
-      this.setState({
-        timeCount: 0,
-        carSt: 'รถกำลังเคลื่อนที่'
-      })
-    }
-
-    isSameObj = (obj1, obj2) => {
-      console.log('date1 :', obj1.date)
-      console.log('date2 :', obj2.date)
-      if(obj1.date==obj2.date
-        && obj1.time==obj2.time
-        && obj1.temp==obj2.temp
-        && obj1.lat==obj2.lat
-        && obj1.lng==obj2.lng
-        && obj1.carID==obj2.carID){
-          console.log('+++')
-          return true
-      }
-      console.log('---')
-      return false
-    }
-
-    setVal = (data) => {
-      console.log('setVal')
-      this.setState((old) => {
-        let t = 0
-        console.log('old: ', old)
-        console.log('data: ', data)
-        if(isSameObj(old, data)) {
-          t = old.realTimeCount+1
-        }
-        return {
-          carID: data.carID,
-          lat: data.lat,
-          lng: data.lng,
-          temp: data.temp,
-          time: data.time,
-          date: data.date,
-          realTimeCount: t
-        }
-      })
-      console.log('realtimeCount:', this.state.realTimeCount)
-      if(this.state.realTimeCount>=3) {
-        console.log('not update!!')
-        console.log('ถึง รร แล้วครับ')
-      }
-    }
-
-    fetch('https://kiddatabase.herokuapp.com/watch/'+btAddr+'/getlast', {
-         method: 'GET',
-         headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'who': 'parent',
-          'secret_key': 'cyhggt'
-        },
-      })
-      .then((response) => response.json())
-      .then((responseJson) => {
-       // console.log(responseJson);
-        if(responseJson) {
-          
-    
-          let d = distance(oldData.lat, oldData.lng, responseJson.lat, responseJson.lng)
-          setVal(responseJson)
-          if(d*1000<=15) {
-            timeUp()
-          }else {
-            if(oldData.lat != 99.99 && oldData.lng != 99.99) {
-              resetTime()
-            }  
-          }
-        }
-      })
-      .catch((error) => {
-         console.error(error);
-      });
-  }
-
   render() {
     const { navigate } = this.props.navigation
     const { navigation } = this.props;
