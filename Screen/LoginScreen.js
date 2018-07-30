@@ -11,14 +11,6 @@ import { LinearGradient } from 'expo';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Logocyh from '../components/Logocyh';
 
-var config = {
-  apiKey: "AIzaSyBevRQtoQ6xc8qJ0EBImxZeCNB684IxBno",
-  authDomain: "cyhfirebase.firebaseapp.com",
-  databaseURL: "https://cyhfirebase.firebaseio.com",
-  projectId: "cyhfirebase",
-  storageBucket: "cyhfirebase.appspot.com",
-  messagingSenderId: "333181013082"
-};
 
 export default class LoginScreen extends Component {
   static navigationOptions = {
@@ -28,20 +20,15 @@ export default class LoginScreen extends Component {
     super(props);
 
     this.state = {
-      waitLogin: false
-    }
-
-    firebase.initializeApp(config);
-
-    this.state = {
-      email: '',
-      password: ''
+      waitLogin: false,
+      username: 'none',
+      password: 'none'
     }
   }
 
-  SetEmailVal(val) {
+  SetUsernameVal(val) {
     this.setState({
-      email: val
+      username: val
     })
   }
 
@@ -51,61 +38,35 @@ export default class LoginScreen extends Component {
     })
   }
 
-  StopWait() {
+  LogIn() {
     this.setState({
-      waitLogin: false
+      waitLogin: true
     })
-  }
-
-
-  SignIn() {
-    this.setState({waitLogin: true})
-    firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
-    .then(result => {
-      //console.log('Sign In Successful')
-      //Alert.alert('Sign In Successful')
-      const { navigate } = this.props.navigation
-
-      stopWait = () => {
+    let url = 'https://kiddatabase.herokuapp.com/user/'+this.state.username+'/'+this.state.password
+    fetch(url, {
+         method: 'GET'
+      })
+      .then((response) => response.json())
+      .then((responseJson) => {
         this.setState({
           waitLogin: false
         })
-      }
-
-      var database = firebase.database();
-        database.ref('users/'+result.user.uid).once('value').then(function(snapshot){
-            console.log(snapshot.val().btAddr)
-            //is logined
-            stopWait()
-            navigate('Profile', { btAddr: snapshot.val().btAddr })
-        })
-      
-    })
-    .catch(e => {
-      //fail to login
-      this.setState({waitLogin: false})
-      Alert.alert(e.message)
-    })
-  }
-/*
-  SignUp() {
-    firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
-    .then(result => {
-      let usersRef = firebase.database().ref().child("users")
-      usersRef.child(result.user.uid).set({
-        id: result.user.uid,
-        email: this.state.email,
-        btAddr: ''
+        if(responseJson[0]==null) {
+          Alert.alert('Username หรือ Password ไม่ถูกต้อง')
+        }else {
+          console.log(responseJson[0].mac_address)
+          const { navigate } = this.props.navigation
+          navigate('Profile', {btAddr: responseJson[0].mac_address})
+        }
       })
-      //console.log(result.user.uid)
-      Alert.alert('Sign Up Successful')
-    })
-    .catch(e => {
-      //console.log(e.message)
-      Alert.alert(e.message)
-    })
+      .catch((error) => {
+         console.error(error);
+         this.setState({
+          waitLogin: false
+        })
+      });
   }
-  */
+
 
   render() {
     const { navigate } = this.props.navigation
@@ -129,11 +90,11 @@ export default class LoginScreen extends Component {
         <View style={styles.inputPlace}>
           
           <Input 
-            name='email-outline'
+            name='account-outline'
             type='material-community'
             size={42}
-            textChange={this.SetEmailVal.bind(this)}
-            holder='Email'
+            textChange={this.SetUsernameVal.bind(this)}
+            holder='Username'
             isPassword={false}
             />
 
@@ -148,7 +109,7 @@ export default class LoginScreen extends Component {
 
           <BtnFull
             btnText="Sign In" 
-            Method={this.SignIn.bind(this)}
+            Method={this.LogIn.bind(this)}
             />
 
           {/*

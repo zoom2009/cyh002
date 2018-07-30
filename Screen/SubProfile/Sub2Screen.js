@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Text, Image } from 'react-native';
 import { LinearGradient } from 'expo';
+import BtnBottom from '../../components/BtnBottom'
 
 export default class Sub2Screen extends Component {
   static navigationOptions = {
@@ -24,6 +25,13 @@ export default class Sub2Screen extends Component {
         style={styles.container}>
 
         <Text>Sub2</Text>
+
+        <BtnBottom 
+          Method={()=>{
+            navigate('Profile')
+          }}
+          text='ย้อนกลับ'
+          />
 
       </LinearGradient>
     )
