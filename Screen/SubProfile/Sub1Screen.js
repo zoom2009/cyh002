@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, Alert } from 'react-native';
 import { LinearGradient } from 'expo';
 import Map from '../../components/Map'
 import TextBlock from '../../components/TextBlock'
@@ -17,8 +17,11 @@ export default class Sub1Screen extends Component {
   }
   constructor(props) {
     super(props)
+    const { navigation } = this.props;
+    const btAddr = navigation.getParam('btAddr', 'none bluetooth id');
 
     this.state = {
+      btAddr: btAddr,
       date: '',
       time: '',
       carID: '',
@@ -33,13 +36,29 @@ export default class Sub1Screen extends Component {
 
     var CheckConnect
 
-    this.socket.on('carPost', (data) => {
-      const { navigation } = this.props;
-      const btAddr = navigation.getParam('btAddr', 'none bluetooth id');
+    this.socket.on('alert', (data) => {
+      if(this.state.btAddr == data) {
+        Alert.alert('ฉุกเฉิน! ลูกของคุณกำลังติดอยู่ในรถ')
+      }
+    })
 
-      if(this.isHaveMacAddr(data.watch, btAddr)) {
+    this.socket.on('finish school', (data) => {
+      if(this.state.btAddr == data) {
+        Alert.alert('ลูกของคุณเดินทางถึง โรงเรียนแล้ว')
+      }
+    })
+
+    this.socket.on('finish home', (data) => {
+      if(this.state.btAddr == data) {
+        Alert.alert('ลูกของคุณเดินทางถึง บ้านแล้ว')
+      }
+    })
+
+    this.socket.on('carPost', (data) => {
+     
+      if(this.isHaveMacAddr(data.watch, this.state.btAddr)) {
         clearTimeout(CheckConnect);
-        console.log('is found ', btAddr)
+        console.log('is found ', this.state.btAddr)
         console.log(data)
         this.setState({
           date: data.date,
@@ -64,7 +83,7 @@ export default class Sub1Screen extends Component {
           })
         }, 30000)
       }else {
-        console.log('not found this addr:', btAddr)
+        console.log('not found this addr:', this.state.btAddr)
         console.log("data is", data)
       }
     })  
@@ -83,9 +102,7 @@ export default class Sub1Screen extends Component {
   
   render() {
     const { navigate } = this.props.navigation
-    const { navigation } = this.props;
-    const btAddr = navigation.getParam('btAddr', 'none bluetooth id');
-
+   
     let carStatusColor = ''
     if(this.state.carSt === 'รถไม่เคลื่อนที่') {
       carStatusColor = '#d9534f'
@@ -118,6 +135,8 @@ export default class Sub1Screen extends Component {
         <BtnBottom 
           Method={()=>{
             this.socket.removeAllListeners("carPost");
+            this.socket.removeAllListeners("finish school");
+            this.socket.removeAllListeners("finish home");
             navigate('Profile')
           }}
           text='ย้อนกลับ'
