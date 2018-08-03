@@ -11,8 +11,9 @@ import { LinearGradient } from 'expo';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Logocyh from '../components/Logocyh';
 
+import { inject, observer } from 'mobx-react'
 
-export default class LoginScreen extends Component {
+class LoginScreen extends Component {
   static navigationOptions = {
     title: 'Login'
   }
@@ -56,6 +57,7 @@ export default class LoginScreen extends Component {
         }else {
           console.log(responseJson[0].mac_address)
           const { navigate } = this.props.navigation
+          this.props.CarState.mac_address = responseJson[0].mac_address
           navigate('Profile', {btAddr: responseJson[0].mac_address})
         }
       })
@@ -138,6 +140,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'column'
-  },
+  }
+})
   
-});
+export default inject('CarState')(observer(LoginScreen))

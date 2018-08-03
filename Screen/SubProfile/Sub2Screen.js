@@ -3,7 +3,9 @@ import { View, StyleSheet, Text, Image } from 'react-native';
 import { LinearGradient } from 'expo';
 import BtnBottom from '../../components/BtnBottom'
 
-export default class Sub2Screen extends Component {
+import { inject, observer } from 'mobx-react'
+
+class Sub2Screen extends Component {
   static navigationOptions = {
     title: 'Sub2'
   }
@@ -13,10 +15,13 @@ export default class Sub2Screen extends Component {
   }
 
   render() {
+    
     const { navigate } = this.props.navigation
     const { navigation } = this.props;
     const btAddr = navigation.getParam('btAddr', 'none bluetooth id');
     console.log('data :', btAddr)
+    var { CarState } = this.props
+    console.log(CarState)
     return (
       <LinearGradient 
         start={[0.5,0]}
@@ -47,3 +52,5 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
 });
+
+export default inject('CarState')(observer(Sub2Screen))

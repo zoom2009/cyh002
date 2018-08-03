@@ -1,5 +1,11 @@
 import React, { Component } from 'react';
+import 'es6-symbol/implement'
+
 import { StackNavigator } from 'react-navigation'
+
+import { Provider } from 'mobx-react'
+import CarState from './Stores/CarState'
+
 
 import HomeScreen from './Screen/HomeScreen'
 import LoginScreen from './Screen/LoginScreen'
@@ -30,7 +36,9 @@ const NavigationApp = StackNavigator({
 export default class App extends Component {
   render() {
     return (
-      <NavigationApp />
+      <Provider CarState={CarState}>
+        <NavigationApp />
+      </Provider>
     )
   }
 }

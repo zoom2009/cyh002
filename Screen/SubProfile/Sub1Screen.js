@@ -5,110 +5,35 @@ import Map from '../../components/Map'
 import TextBlock from '../../components/TextBlock'
 import BtnBottom from '../../components/BtnBottom'
 
-
-import SocketIOClient from 'socket.io-client';
-
-var distance = require('gps-distance')
+import { inject, observer } from 'mobx-react'
 
 
-export default class Sub1Screen extends Component {
+class Sub1Screen extends Component {
   static navigationOptions = {
     title: 'Sub1'
   }
   constructor(props) {
     super(props)
-    const { navigation } = this.props;
-    const btAddr = navigation.getParam('btAddr', 'none bluetooth id');
 
-    this.state = {
-      btAddr: btAddr,
-      date: '',
-      time: '',
-      carID: '',
-      carSt: 'รถไม่เคลื่อนที่',
-      kidStatus: 'เด็กไม่อยู่ในรถ',
-      lat: 99.99, //8.637796473
-      lng: 99.99, //99.89862454
-      temp: 99.99
-    }
-
-    this.socket = SocketIOClient('https://kiddatabase.herokuapp.com/');
-
-    var CheckConnect
-
-    this.socket.on('alert', (data) => {
-      if(this.state.btAddr == data) {
-        Alert.alert('ฉุกเฉิน! ลูกของคุณกำลังติดอยู่ในรถ')
-      }
-    })
-
-    this.socket.on('finish school', (data) => {
-      if(this.state.btAddr == data) {
-        Alert.alert('ลูกของคุณเดินทางถึง โรงเรียนแล้ว')
-      }
-    })
-
-    this.socket.on('finish home', (data) => {
-      if(this.state.btAddr == data) {
-        Alert.alert('ลูกของคุณเดินทางถึง บ้านแล้ว')
-      }
-    })
-
-    this.socket.on('carPost', (data) => {
-     
-      if(this.isHaveMacAddr(data.watch, this.state.btAddr)) {
-        clearTimeout(CheckConnect);
-        console.log('is found ', this.state.btAddr)
-        console.log(data)
-        this.setState({
-          date: data.date,
-          time: data.time,
-          carID: data.id,
-          lat: parseFloat(data.lat),
-          lng: parseFloat(data.lng),
-          temp: data.temp,
-          carSt: 'รถกำลังเคลื่อนที่',
-          kidStatus: 'เด็กอยู่ในรถ',
-        })
-        CheckConnect = setTimeout(() => {
-          this.setState({
-            date: '',
-            time: '',
-            carID: '',
-            carSt: 'รถไม่เคลื่อนที่',
-            kidStatus: 'เด็กไม่อยู่ในรถ',
-            lat: 99.99, //8.637796473
-            lng: 99.99, //99.89862454
-            temp: 99.99
-          })
-        }, 30000)
-      }else {
-        console.log('not found this addr:', this.state.btAddr)
-        console.log("data is", data)
-      }
-    })  
+    var { CarState } = this.props
+    CarState.setlat(5)
+    console.log('###')
+    console.log(CarState)
 
   }
-
-  isHaveMacAddr (data, macAddr) {
-    for(let i=0;i<data.length;i++) {
-      if(data[i].mac_address == macAddr) {
-        return true
-      }
-    }
-    return false
-  }
-
   
   render() {
+    const { CarState } = this.props
+    console.log(CarState)
+    
     const { navigate } = this.props.navigation
    
-    let carStatusColor = ''
-    if(this.state.carSt === 'รถไม่เคลื่อนที่') {
-      carStatusColor = '#d9534f'
-    }else if(this.state.carSt === 'รถกำลังเคลื่อนที่'){ 
-      carStatusColor = '#5cb85c'
+    if(CarState.carStatus == 'รถไม่เคลื่อนที่') {
+      CarState.carStatusColor = '#d9534f'
+    }else if(CarState.carStatus == 'รถกำลังเคลื่อนที่'){ 
+      CarState.carStatusColor = '#5cb85c'
     }
+    console.log('car color:', CarState.carStatusColor)
     
     //console.log('data :', btAddr)
     return (
@@ -119,24 +44,21 @@ export default class Sub1Screen extends Component {
         style={styles.container}>
 
         <View style={styles.fieldText}>
-          <Text style={[styles.textInField, {backgroundColor: carStatusColor}]}>สถานะ: {this.state.carSt}</Text>
+          <Text style={[styles.textInField, {backgroundColor: CarState.carStatusColor}]}>สถานะ: {CarState.carStatus}</Text>
         </View>
 
         <Map 
-          lat={this.state.lat}
-          lng={this.state.lng}
+          lat={CarState.lat}
+          lng={CarState.lng}
           title="Title"
           des="Description"
         />
 
-        <TextBlock text={'สถานะ: '+this.state.kidStatus} />
-        <TextBlock text={'อุณหภูมิ: '+this.state.temp+' องศา'} />
+        <TextBlock text={'สถานะ: '+ CarState.kidStatus} />
+        <TextBlock text={'อุณหภูมิ: '+ CarState.temp+' องศา'} />
 
         <BtnBottom 
           Method={()=>{
-            this.socket.removeAllListeners("carPost");
-            this.socket.removeAllListeners("finish school");
-            this.socket.removeAllListeners("finish home");
             navigate('Profile')
           }}
           text='ย้อนกลับ'
@@ -175,3 +97,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#d9534f'
   },
 });
+
+export default inject('CarState')(observer(Sub1Screen))
