@@ -71,8 +71,11 @@ class ProfileScreen extends Component {
             lng: 99.99,
             temp: 99.99,
             carStatus: 'ไม่พบสัญญาณ',
-            kidStatus: 'ไม่พบสัญญาณ'
+            kidStatus: 'ไม่พบสัญญาณ',
+            carStatusColor: '#000',
+            carStatusColor: '#d9534f'
           }
+          Alert.alert('ไม่พบสัญญาณ')
           CarState.setCarState(data)
         }, 30000)
       }else {

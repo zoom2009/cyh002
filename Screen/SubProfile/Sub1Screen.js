@@ -28,7 +28,7 @@ class Sub1Screen extends Component {
     
     const { navigate } = this.props.navigation
    
-    if(CarState.carStatus == 'รถไม่เคลื่อนที่') {
+    if(CarState.carStatus == 'รถไม่เคลื่อนที่' || CarState.carStatus == 'ไม่พบสัญญาณ') {
       CarState.carStatusColor = '#d9534f'
     }else if(CarState.carStatus == 'รถกำลังเคลื่อนที่'){ 
       CarState.carStatusColor = '#5cb85c'
