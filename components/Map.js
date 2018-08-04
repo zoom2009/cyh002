@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, View } from 'react-native';
 //Map
-import MapView from 'react-native-maps';
-import { Marker } from 'react-native-maps';
+import { MapView } from 'expo';
 
 export default class Map extends Component {
     render() {
@@ -11,13 +10,13 @@ export default class Map extends Component {
                 <MapView 
                     style={styles.map}
                     region={{
-                    latitude: this.props.lat,
-                    longitude: this.props.lng,
-                    latitudeDelta: 0.0922,
-                    longitudeDelta: 0.0421,
+                        latitude: this.props.lat,
+                        longitude: this.props.lng,
+                        latitudeDelta: 0.0922,
+                        longitudeDelta: 0.0421,
                     }}>
 
-                    <Marker
+                    <MapView.Marker
                         image={require('../img/van_icon.png')}
                         coordinate={{
                             latitude: this.props.lat,

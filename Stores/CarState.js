@@ -5,7 +5,7 @@ class CarState {
     date = ''
     time = ''
     carID = ''
-    carStatus = 'รภไม่เคลื่อนที่'
+    carStatus = 'รถไม่เคลื่อนที่'
     kidStatus = 'เด็กไม่อยู่ในรถ'
     lat = 99.99
     lng = 99.99
